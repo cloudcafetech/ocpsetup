@@ -84,6 +84,7 @@ else
  SKAFPOD=$(kubectl get pod -n $PROJECT | grep strimzi-cluster-operator | awk '{print $1}')
  while [[ $(kubectl get pods jaeger-operator-0 -n $PROJECT -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do printf '.'; sleep 2; done
  
+ sed -i "s/route/ingress/g" kafka.yaml
  kubectl apply -f kafka.yaml -n $PROJECT
 fi
 
