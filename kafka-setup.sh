@@ -19,8 +19,6 @@ fi
 mkdir kafka
 cd kafka
 
-yum install java-1.8.0-openjdk -y
-
 wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/$KAFKAVERSON/strimzi-cluster-operator-$KAFKAVERSON.yaml
 sed -i "s/myproject/$PROJECT/" strimzi-cluster-operator-$KAFKAVERSON.yaml 
 
