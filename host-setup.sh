@@ -38,7 +38,7 @@ tar xvf openshift-origin-client-tools*.tar.gz
 cd openshift-origin-client*/
 mv  oc kubectl  /usr/local/bin/
 cd
-rm -rf get-docker.sh openshift-origin-client-tools-* 
+rm -rf get-docker.sh openshift-origin-client-tools-* openshift-origin-client-tools*.tar.gz
 
 public_ip=`ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
 oc cluster up --routing-suffix="${public_ip}.nip.io"
