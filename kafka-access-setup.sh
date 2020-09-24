@@ -33,3 +33,7 @@ fi
 echo security.protocol=SSL >> $USER-$KAFKACLUSTER-$PLAFORM.properties
 echo ssl.truststore.password=$PASSWORD >> $USER-$KAFKACLUSTER-$PLAFORM.properties
 echo ssl.truststore.location=/root/kafka/$USER-$KAFKACLUSTER-truststore.jks >> $USER-$KAFKACLUSTER-$PLAFORM.properties
+
+cp $USER-$KAFKACLUSTER-$PLAFORM.properties $USER-$KAFKACLUSTER-truststore.jks /home/centos/
+chmod centos:centos /home/centos/$USER-$KAFKACLUSTER*
+
