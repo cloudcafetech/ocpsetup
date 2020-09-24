@@ -20,12 +20,12 @@ yum install java-1.8.0-openjdk -y
 
 if [[ "$PLAFORM" == "ocp" ]]; then
  oc project $PROJECT
- oc extract secret/$KAFKACLUSTER-cluster-ca-cert $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
+ oc extract secret/$KAFKACLUSTER-cluster-ca-cert -n $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
  keytool -import -trustcacerts -alias $USER-$KAFKACLUSTER -file $USER-$KAFKACLUSTER-ca.crt -keystore $USER-$KAFKACLUSTER-truststore.jks -storepass $PASSWORD -noprompt
  rm -rf $USER-$KAFKACLUSTER-ca.crt
 else
  kubectl ns $PROJECT
- kubectl get secret $KAFKACLUSTER-cluster-ca-cert $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
+ kubectl get secret $KAFKACLUSTER-cluster-ca-cert -n $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
  keytool -import -trustcacerts -alias $USER-$KAFKACLUSTER -file $USER-$KAFKACLUSTER-ca.crt -keystore $USER-$KAFKACLUSTER-truststore.jks -storepass $PASSWORD -noprompt
  rm -rf $USER-$KAFKACLUSTER-ca.crt 
 fi
