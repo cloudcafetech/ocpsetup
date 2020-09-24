@@ -22,12 +22,14 @@ if [[ "$PLAFORM" == "ocp" ]]; then
  oc project $PROJECT
  oc extract secret/$KAFKACLUSTER-cluster-ca-cert $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
  keytool -import -trustcacerts -alias $USER-$KAFKACLUSTER -file $USER-$KAFKACLUSTER-ca.crt -keystore $USER-$KAFKACLUSTER-truststore.jks -storepass $PASSWORD -noprompt
+ rm -rf $USER-$KAFKACLUSTER-ca.crt
 else
  kubectl ns $PROJECT
  kubectl get secret $KAFKACLUSTER-cluster-ca-cert $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
  keytool -import -trustcacerts -alias $USER-$KAFKACLUSTER -file $USER-$KAFKACLUSTER-ca.crt -keystore $USER-$KAFKACLUSTER-truststore.jks -storepass $PASSWORD -noprompt
+ rm -rf $USER-$KAFKACLUSTER-ca.crt 
 fi
 
-echo security.protocol=SSL >> $KAFKACLUSTER-$PLAFORM.properties
-echo ssl.truststore.password=$PASSWORD >> $KAFKACLUSTER-$PLAFORM.properties
-echo ssl.truststore.location=/root/kafka/$USER-$KAFKACLUSTER-truststore.jks >> $KAFKACLUSTER-$PLAFORM.properties
+echo security.protocol=SSL >> $USER-$KAFKACLUSTER-$PLAFORM.properties
+echo ssl.truststore.password=$PASSWORD >> $USER-$KAFKACLUSTER-$PLAFORM.properties
+echo ssl.truststore.location=/root/kafka/$USER-$KAFKACLUSTER-truststore.jks >> $USER-$KAFKACLUSTER-$PLAFORM.properties
