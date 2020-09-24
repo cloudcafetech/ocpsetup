@@ -84,7 +84,55 @@ else
  SKAFPOD=$(kubectl get pod -n $PROJECT | grep strimzi-cluster-operator | awk '{print $1}')
  while [[ $(kubectl get pods jaeger-operator-0 -n $PROJECT -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do printf '.'; sleep 2; done
  
- wget https://raw.githubusercontent.com/cloudcafetech/ocpsetup/master/kube-kafka.yaml
+cat <<EOF > kube-kafka.yaml
+apiVersion: kafka.strimzi.io/v1beta1
+kind: Kafka
+metadata:
+  name: $KAFKACLUSTER
+spec:
+  kafka:
+    version: 2.5.0
+    replicas: 3
+    listeners:
+      plain: {}
+      tls: {}	  
+      external:
+        type: ingress
+        configuration:
+          bootstrap:
+            host: $KAFKACLUSTER-bootstrap-$PROJECT.$KAFKADNS
+          brokers:
+          - broker: 0
+            host: $KAFKACLUSTER-broker-0-$PROJECT.$KAFKADNS
+          - broker: 1
+            host: $KAFKACLUSTER-broker-1-$PROJECT.$KAFKADNS
+          - broker: 2
+            host: $KAFKACLUSTER-broker-2-$PROJECT.$KAFKADNS			
+    config:
+      offsets.topic.replication.factor: 3
+      transaction.state.log.replication.factor: 3
+      transaction.state.log.min.isr: 2
+      log.message.format.version: "2.5"
+    storage:
+      type: jbod
+      volumes:
+      - id: 0
+        type: persistent-claim
+        class: $STORAGECLASS
+        size: $KAFKAPVC
+        deleteClaim: false
+  zookeeper:
+    replicas: 3
+    storage:
+      type: persistent-claim
+      class: $STORAGECLASS	  
+      size: $KAFKAPVC
+      deleteClaim: false
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
+ EOF
+ 
  sed -i "s/route/ingress/g" kafka.yaml
  kubectl apply -f kafka.yaml -n $PROJECT
 fi
