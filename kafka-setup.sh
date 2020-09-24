@@ -7,7 +7,8 @@ PROJECT=streaming
 KAFKAVERSON=0.18.0
 KAFKACLUSTER=prod-cluster
 KAFKAPVC=2Gi
-KAFKADNS=10.128.0.46.nip.io
+HIP=`ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
+KAFKADNS=$HIP.nip.io
 STORAGECLASS=kubenfs-storage
 
 if [[ ! $PLAFORM =~ ^( |ocp|kube)$ ]]; then 
@@ -73,7 +74,7 @@ if [[ "$PLAFORM" == "ocp" ]]; then
  
  echo "Waiting for Strimzi Cluster Operator POD ready .."
  SKAFPOD=$(oc get pod -n $PROJECT | grep strimzi-cluster-operator | awk '{print $1}')
- while [[ $(oc get pods jaeger-operator-0 -n $PROJECT -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do printf '.'; sleep 2; done
+ while [[ $(oc get pods $SKAFPOD -n $PROJECT -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do printf '.'; sleep 2; done
 
  oc apply -f kafka.yaml -n $PROJECT
 else
@@ -82,7 +83,7 @@ else
  
  echo "Waiting for Strimzi Cluster Operator POD ready .."
  SKAFPOD=$(kubectl get pod -n $PROJECT | grep strimzi-cluster-operator | awk '{print $1}')
- while [[ $(kubectl get pods jaeger-operator-0 -n $PROJECT -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do printf '.'; sleep 2; done
+ while [[ $(kubectl get pods $SKAFPOD -n $PROJECT -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do printf '.'; sleep 2; done
  
 cat <<EOF > kube-kafka.yaml
 apiVersion: kafka.strimzi.io/v1beta1
@@ -133,9 +134,9 @@ spec:
     userOperator: {}
 EOF
  
- #sed -i "s/route/ingress/g" kafka.yaml
- #kubectl apply -f kafka.yaml -n $PROJECT
- kubectl apply -f kube-kafka.yaml -n $PROJECT
+ sed -i "s/route/ingress/g" kafka.yaml
+ kubectl apply -f kafka.yaml -n $PROJECT
+ #kubectl apply -f kube-kafka.yaml -n $PROJECT
 fi
 
 echo "Waiting everything ready .."
