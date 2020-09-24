@@ -44,3 +44,10 @@ public_ip=`ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
 oc cluster up --routing-suffix="${public_ip}.nip.io"
 
 oc cluster status
+
+# Deploying dynamic NFS based persistant storage
+wget https://raw.githubusercontent.com/cloudcafetech/ocpsetup/master/nfsstorage-setup.sh
+chmod +x ./nfsstorage-setup.sh
+#./nfsstorage-setup.sh
+
+
