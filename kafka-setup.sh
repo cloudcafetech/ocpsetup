@@ -131,10 +131,11 @@ spec:
   entityOperator:
     topicOperator: {}
     userOperator: {}
- EOF
+EOF
  
- sed -i "s/route/ingress/g" kafka.yaml
- kubectl apply -f kafka.yaml -n $PROJECT
+ #sed -i "s/route/ingress/g" kafka.yaml
+ #kubectl apply -f kafka.yaml -n $PROJECT
+ kubectl apply -f kube-kafka.yaml -n $PROJECT
 fi
 
 echo "Waiting everything ready .."
