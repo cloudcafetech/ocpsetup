@@ -13,14 +13,14 @@ spec:
         type: ingress
         configuration:
           bootstrap:
-            host: bootstrap.$KAFKADNS
+            host: $KAFKACLUSTER-bootstrap-$PROJECT.$KAFKADNS
           brokers:
           - broker: 0
-            host: broker-0.$KAFKADNS
+            host: $KAFKACLUSTER-broker-0-$PROJECT.$KAFKADNS
           - broker: 1
-            host: broker-1.$KAFKADNS
+            host: $KAFKACLUSTER-broker-1-$PROJECT.$KAFKADNS
           - broker: 2
-            host: broker-2.$KAFKADNS			
+            host: $KAFKACLUSTER-broker-2-$PROJECT.$KAFKADNS			
     config:
       offsets.topic.replication.factor: 3
       transaction.state.log.replication.factor: 3
