@@ -91,4 +91,7 @@ echo "Waiting everything ready .."
 sleep 30
 kubectl get all -n $PROJECT
 
-
+# Setup for Kafka Access
+wget https://raw.githubusercontent.com/cloudcafetech/ocpsetup/master/kafka-access-setup.sh
+chmod +x ./kafka-access-setup.sh
+#./kafka-access-setup.sh
