@@ -92,7 +92,7 @@ metadata:
 spec:
   kafka:
     version: 2.5.0
-    replicas: 3
+    replicas: $REPLICA
     listeners:
       plain: {}
       tls: {}	  
@@ -109,9 +109,9 @@ spec:
           - broker: 2
             host: $KAFKACLUSTER-broker-2-$PROJECT.$KAFKADNS			
     config:
-      offsets.topic.replication.factor: 3
-      transaction.state.log.replication.factor: 3
-      transaction.state.log.min.isr: 2
+      offsets.topic.replication.factor: $REPLICA
+      transaction.state.log.replication.factor: $REPLICA
+      transaction.state.log.min.isr: $LOGVAL
       log.message.format.version: "2.5"
     storage:
       type: jbod
@@ -122,7 +122,7 @@ spec:
         size: $KAFKAPVC
         deleteClaim: false
   zookeeper:
-    replicas: 3
+    replicas: $REPLICA
     storage:
       type: persistent-claim
       class: $STORAGECLASS	  
