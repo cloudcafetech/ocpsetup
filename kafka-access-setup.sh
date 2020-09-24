@@ -23,13 +23,17 @@ if [[ "$PLAFORM" == "ocp" ]]; then
  oc extract secret/$KAFKACLUSTER-cluster-ca-cert -n $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
  keytool -import -trustcacerts -alias $USER-$KAFKACLUSTER -file $USER-$KAFKACLUSTER-ca.crt -keystore $USER-$KAFKACLUSTER-truststore.jks -storepass $PASSWORD -noprompt
  rm -rf $USER-$KAFKACLUSTER-ca.crt
+ KAFKAROUTE=$(oc get routes $KAFKACLUSTER-kafka-bootstrap-$PROJECT -n $PROJECT | grep -v HOST | awk '{ print $2 }')
 else
  kubectl ns $PROJECT
  kubectl get secret $KAFKACLUSTER-cluster-ca-cert -n $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
  keytool -import -trustcacerts -alias $USER-$KAFKACLUSTER -file $USER-$KAFKACLUSTER-ca.crt -keystore $USER-$KAFKACLUSTER-truststore.jks -storepass $PASSWORD -noprompt
  rm -rf $USER-$KAFKACLUSTER-ca.crt 
+ KAFKAROUTE=$(kubectl get ing n $PROJECT | grep kafka-bootstrap | grep -v HOST | awk '{ print $1 }')
 fi
 
+
+echo bootstrap.servers=$KAFKAROUTE:443 >> $USER-$KAFKACLUSTER-$PLAFORM.properties
 echo security.protocol=SSL >> $USER-$KAFKACLUSTER-$PLAFORM.properties
 echo ssl.truststore.password=$PASSWORD >> $USER-$KAFKACLUSTER-$PLAFORM.properties
 echo ssl.truststore.location=/root/kafka/$USER-$KAFKACLUSTER-truststore.jks >> $USER-$KAFKACLUSTER-$PLAFORM.properties
