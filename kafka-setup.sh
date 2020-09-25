@@ -24,7 +24,7 @@ wget https://github.com/strimzi/strimzi-kafka-operator/releases/download/$KAFKAV
 sed -i "s/myproject/$PROJECT/" strimzi-cluster-operator-$KAFKAVERSON.yaml 
 
 if [[ "$REPLICA" == "3" ]]; then
- LOGVAL=3
+ LOGVAL=2
 else
  LOGVAL=1
 fi
@@ -134,9 +134,12 @@ spec:
     userOperator: {}
 EOF
  
- sed -i "s/route/ingress/g" kafka.yaml
- kubectl apply -f kafka.yaml -n $PROJECT
- #kubectl apply -f kube-kafka.yaml -n $PROJECT
+ #sed -i "s/route/ingress/g" kafka.yaml
+ #kubectl apply -f kafka.yaml -n $PROJECT
+ if [[ "$REPLICA" == "1" ]]; then
+ sed -i '/broker-0/,+3 d' kube-kafka.yaml; sed -i 's/broker-2/broker-0/' kube-kafka.yaml
+ fi 
+ kubectl apply -f kube-kafka.yaml -n $PROJECT
 fi
 
 echo "Waiting everything ready .."
