@@ -29,7 +29,7 @@ else
  kubectl get secret $KAFKACLUSTER-cluster-ca-cert -n $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
  keytool -import -trustcacerts -alias $USER-$KAFKACLUSTER -file $USER-$KAFKACLUSTER-ca.crt -keystore $USER-$KAFKACLUSTER-truststore.jks -storepass $PASSWORD -noprompt
  rm -rf $USER-$KAFKACLUSTER-ca.crt 
- KAFKAROUTE=$(kubectl get ing n $PROJECT | grep kafka-bootstrap | grep -v HOST | awk '{ print $1 }')
+ KAFKAROUTE=$(kubectl get ing -n $PROJECT | grep kafka-bootstrap | grep -v HOST | awk '{ print $1 }')
 fi
 
 
