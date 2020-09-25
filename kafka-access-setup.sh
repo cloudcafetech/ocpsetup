@@ -26,7 +26,7 @@ if [[ "$PLAFORM" == "ocp" ]]; then
  KAFKAROUTE=$(oc get routes $KAFKACLUSTER-kafka-bootstrap-$PROJECT -n $PROJECT | grep -v HOST | awk '{ print $2 }')
 else
  kubectl ns $PROJECT
- kubectl get secret $KAFKACLUSTER-cluster-ca-cert -n $PROJECT --keys=ca.crt --to=- > $USER-$KAFKACLUSTER-ca.crt
+ kubectl get secret $KAFKACLUSTER-cluster-ca-cert -n $PROJECT -o jsonpath='{.data.ca\.crt}' | base64 -d > $USER-$KAFKACLUSTER-ca.crt
  keytool -import -trustcacerts -alias $USER-$KAFKACLUSTER -file $USER-$KAFKACLUSTER-ca.crt -keystore $USER-$KAFKACLUSTER-truststore.jks -storepass $PASSWORD -noprompt
  rm -rf $USER-$KAFKACLUSTER-ca.crt 
  KAFKAROUTE=$(kubectl get ing -n $PROJECT | grep kafka-bootstrap | grep -v HOST | awk '{ print $1 }')
