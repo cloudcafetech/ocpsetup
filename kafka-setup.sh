@@ -29,6 +29,14 @@ else
  LOGVAL=1
 fi
 
+if [[ "$PLAFORM" == "ocp" ]]; then
+ oc new-project $PROJECT
+ oc apply -f strimzi-cluster-operator-$KAFKAVERSON.yaml -n $PROJECT
+ 
+ echo "Waiting for Strimzi Cluster Operator POD ready .."
+ SKAFPOD=$(oc get pod -n $PROJECT | grep strimzi-cluster-operator | awk '{print $1}')
+ while [[ $(oc get pods $SKAFPOD -n $PROJECT -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do printf '.'; sleep 2; done
+
 cat <<EOF > kafka.yaml
 apiVersion: kafka.strimzi.io/v1beta1
 kind: Kafka
@@ -67,14 +75,6 @@ spec:
     topicOperator: {}
     userOperator: {}
 EOF
-
-if [[ "$PLAFORM" == "ocp" ]]; then
- oc new-project $PROJECT
- oc apply -f strimzi-cluster-operator-$KAFKAVERSON.yaml -n $PROJECT
- 
- echo "Waiting for Strimzi Cluster Operator POD ready .."
- SKAFPOD=$(oc get pod -n $PROJECT | grep strimzi-cluster-operator | awk '{print $1}')
- while [[ $(oc get pods $SKAFPOD -n $PROJECT -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}') != "True" ]]; do printf '.'; sleep 2; done
 
  oc apply -f kafka.yaml -n $PROJECT
 else
@@ -134,8 +134,6 @@ spec:
     userOperator: {}
 EOF
  
- #sed -i "s/route/ingress/g" kafka.yaml
- #kubectl apply -f kafka.yaml -n $PROJECT
  if [[ "$REPLICA" == "1" ]]; then
  sed -i '/broker-0/,+3 d' kube-kafka.yaml; sed -i 's/broker-2/broker-0/' kube-kafka.yaml
  fi 
