@@ -50,4 +50,8 @@ wget https://raw.githubusercontent.com/cloudcafetech/ocpsetup/master/nfsstorage-
 chmod +x ./nfsstorage-setup.sh
 #./nfsstorage-setup.sh
 
+# Kafka setup
+wget https://raw.githubusercontent.com/cloudcafetech/ocpsetup/master/kafka-setup.sh
+chmod +x ./kafka-setup.sh
+#./nfsstorage-setup.sh
 
