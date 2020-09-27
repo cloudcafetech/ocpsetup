@@ -8,5 +8,5 @@ OS ```CentOS 7``` to be ready before hand to start OCP
 
 On Host host run following command
 
-```curl -s https://raw.githubusercontent.com/cloudcafetech/ocpsetup/master/host-setup.sh | bash```
+```curl -s https://raw.githubusercontent.com/cloudcafetech/ocpsetup/master/ocp-setup.sh | bash```
 
